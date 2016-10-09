@@ -1,0 +1,23 @@
+language: android
+
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-24.0.3
+    - android-24
+    - extra-android-m2repository
+    - extra-android-support
+
+before_script:
+    - wget http://devtools.qiniu.com/qshell-v1.8.1.zip
+    - unzip qshell-v1.8.1.zip
+    - mv ./qshell_linux_amd64 /usr/bin/qshell
+    - qshell account ${QINIU_ACCESS_KEY} ${QINIU_SECRET_KEY} 
+
+script:
+    - ANDROID_APP_ID=`cat app/build.gradle | grep applicationId | cut -d '"' -f2`
+    - ANDROID_VERSION_NAME=`cat app/build.gradle | grep versionName | cut -d '"' -f2`
+    - t=`date '+%m-%d-%H%M%S'`
+    - ./gradlew assembleDebug
+    - qshell rput ${QINIU_BUCKET} ${ANDROID_APP_ID}-${ANDROID_VERSION_NAME}-${t}-debug.apk app/build/outputs/apk/app-debug.apk
