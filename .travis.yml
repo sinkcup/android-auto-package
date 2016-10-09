@@ -12,7 +12,8 @@ android:
 before_script:
     - wget http://devtools.qiniu.com/qshell-v1.8.1.zip
     - unzip qshell-v1.8.1.zip
-    - mv ./qshell_linux_amd64 /usr/bin/qshell
+    - mv ./qshell_linux_amd64 ./qshell
+    - export PATH=$PATH:$PWD/
     - qshell account ${QINIU_ACCESS_KEY} ${QINIU_SECRET_KEY} 
 
 script:
