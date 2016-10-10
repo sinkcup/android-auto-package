@@ -20,6 +20,6 @@ before_script:
 script:
     - ANDROID_APP_ID=`cat app/build.gradle | grep applicationId | cut -d '"' -f2`
     - ANDROID_VERSION_NAME=`cat app/build.gradle | grep versionName | cut -d '"' -f2`
-    - t=`date '+%m-%d-%H%M%S'`
+    - t=`date '+%y.%m%d.%H%M%S'`
     - ./gradlew assembleDebug
     - qshell rput ${QINIU_BUCKET} ${ANDROID_APP_ID}-${ANDROID_VERSION_NAME}-${t}-debug.apk app/build/outputs/apk/app-debug.apk

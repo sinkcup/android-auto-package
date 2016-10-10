@@ -21,6 +21,6 @@ install:
     - qshell account ${QINIU_ACCESS_KEY} ${QINIU_SECRET_KEY}
 
 script:
-    - t=`date '+%y.%m.%d%H%M%S'`
+    - t=`date '+%y.%m%d.%H%M%S'`
     - ./gradlew assembleDebug
     - qshell rput ${QINIU_BUCKET} ${ANDROID_APP_ID}-${ANDROID_VERSION_NAME}-${t}-debug.apk app/build/outputs/apk/app-debug.apk
