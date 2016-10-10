@@ -1,0 +1,26 @@
+image: beevelop/android:24.4.1
+
+env:
+    - ANDROID_BUILD_TOOLS_VERSION=`cat app/build.gradle | grep buildToolsVersion | cut -d '"' -f2`
+    - ANDROID_APP_ID=`cat app/build.gradle | grep applicationId | cut -d '"' -f2`
+    - ANDROID_VERSION_NAME=`cat app/build.gradle | grep versionName | cut -d '"' -f2`
+    - QINIU_ACCESS_KEY='should read from web, waiting for daocloud support'
+    - QINIU_SECRET_KEY='daocloud ci is not good'
+    - QINIU_BUCKET='I like travis-ci.org web env'
+
+install:
+    - echo y | android update sdk -a -u -t build-tools-${ANDROID_BUILD_TOOLS_VERSION}
+    - mkdir -p ${ANDROID_HOME}/licenses
+    - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > ${ANDROID_HOME}/licenses/android-sdk-license
+    - echo 'count=0' > ~/.android/repositories.cfg
+    - rm -rf ${ANDROID_HOME}/platform-tools
+    - echo y | android update sdk -a -u -t platform-tools
+    - wget http://devtools.qiniu.com/qshell-v1.8.1.zip
+    - unzip qshell-v1.8.1.zip
+    - mv ./qshell_linux_amd64 /usr/bin/qshell
+    - qshell account ${QINIU_ACCESS_KEY} ${QINIU_SECRET_KEY}
+
+script:
+    - t=`date '+%y.%m.%d%H%M%S'`
+    - ./gradlew assembleDebug
+    - qshell rput ${QINIU_BUCKET} ${ANDROID_APP_ID}-${ANDROID_VERSION_NAME}-${t}-debug.apk app/build/outputs/apk/app-debug.apk
